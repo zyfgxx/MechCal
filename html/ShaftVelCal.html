@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/MyCal.css">
+    <title>Reduce Output Torque calculator</title>
+</head>
+<body onload="mycal()">
+
+<div class="container">
+    <h1><a href="../index.html">
+        <img border="0" src="../img/home_40.png" alt="Home" width="16" height="16"></a> Shaft velocity</h1>
+    <hr>
+    <div class="box1">
+        <div>
+        <label>Shaft diameter (mm):</label>
+        <br>
+        <input type="number" id="od" value="50" onchange="mycal()">
+        <div>
+        <label>Shaft rotation Speed (rpm):</label>
+        <br>
+        <input type="number" id="n" value="1750" onchange="mycal()">
+        </div>
+        <div>
+        <label>Shaft surface speed (m/s):</label>
+        <br>
+        <label class="Result" id="re1"> </label>
+        </div>
+    </div>
+    <button type="button" onclick="mycal()">Calculate</button>
+</div>
+
+</body>
+
+<br>
+<footer>by Yunior</footer>
+
+ <!-- <script src="./mytest.js"></script> -->
+
+<script>
+    function mycal() {
+
+    var od,n,v;
+
+    od = Number(document.getElementById("od").value);
+    n = Number(document.getElementById("n").value);
+
+    v=od/1000*Math.PI*n/60
+
+    var RoundNum =1000;
+    v=Math.round(v*RoundNum)/RoundNum;
+
+    document.getElementById("re1").innerHTML = v;
+    }
+
+</script>
+
+
+</html>

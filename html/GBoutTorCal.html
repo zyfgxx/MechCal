@@ -57,6 +57,7 @@
     function mycal() {
 
     var p,n,i,SF,T1,T2;
+    var T12,T22
 
     p = Number(document.getElementById("power").value);
     n = Number(document.getElementById("n").value);
@@ -65,14 +66,20 @@
 
     T1=p*9550/n;
     T2=T1*i*SF;
+    T12=T1/9.8;
+    T22=T2/9.8;
+
 
     var RoundNum =1000;
     T1=Math.round(T1*RoundNum)/RoundNum;
     T2=Math.round(T2*RoundNum)/RoundNum;
 
-    document.getElementById("re1").innerHTML = T1;
-    document.getElementById("re2").innerHTML = T2;
+    var RoundNum =10000;
+    T12=Math.round(T12*RoundNum)/RoundNum;
+    T22=Math.round(T22*RoundNum)/RoundNum;
 
+    document.getElementById("re1").innerHTML = T1 + " (Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t" + T12 + " (kgf)";
+    document.getElementById("re2").innerHTML = T2 + " (Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t" + T22 + " (kgf)";
     }
 
 </script>

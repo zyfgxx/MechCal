@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/MyCal.css">
+    <title>Reduce Output Torque calculator</title>
+</head>
+<body onload="mycal()">
+
+<div class="container">
+    <h1><a href="../index.html">
+        <img border="0" src="../img/home_40.png" alt="Home" width="16" height="16"></a> Weight Calculater for cylinder</h1>
+    <hr>
+    <div class="box1">
+        <div>
+            <label>Outer diameter (mm):</label>
+            <br>
+            <input type="number" id="od" value="50" onchange="mycal()">
+        <div>
+            <label>Inner diameter for hollow shaft (mm):</label>
+            <br>
+            <input type="number" id="id" value="0" onchange="mycal()">
+        </div>
+        <div>
+            <label>Length (mm):</label>
+            <br>
+            <input type="number" id="L" value="50" onchange="mycal()">
+        </div>
+        <div>
+            <label>Material and density:</label>
+            <label id="MatDen">7.86 kg/dm3</label>
+            <br>
+            <select id="Material" onchange="FindDensity()">
+                <option value="7.86" selected>Steel</option>
+                <option value="7.20">Cast iron</option>
+                <option value="2.7">Aluminium</option>
+                <option value="1.0">Water</option>
+                <option value="0.85">Oil</option>
+            </select>
+        </div>
+        <div>
+            <label>volume (dm^3) or (Litr):</label>
+            <br>
+            <label class="Result" id="re1"> </label>
+        </div>
+        <div>
+            <label>Weight (kg):</label>
+            <br>
+            <label class="Result" id="re2"> </label>
+        </div>
+    </div>
+    <button type="button" onclick="mycal()">Calculate</button>
+</div>
+
+</body>
+
+<br>
+<footer>by Yunior</footer>
+
+ <!-- <script src="./mytest.js"></script> -->
+
+<script>
+    function mycal() {
+
+    var od,id,L,density,V,W;
+
+    od = Number(document.getElementById("od").value);
+    id = Number(document.getElementById("id").value);
+    L = Number(document.getElementById("L").value);
+    density=document.getElementById("Material").value;
+
+    V=Math.PI*(od*od-id*id)/4*L/1e6;
+    W=V*density
+
+    var RoundNum =1000;
+    V=Math.round(V*RoundNum)/RoundNum;
+    W=Math.round(W*RoundNum)/RoundNum;
+
+    document.getElementById("re1").innerHTML = V;
+    document.getElementById("re2").innerHTML = W;
+    }
+
+    function FindDensity(){
+        var den1;
+
+        den1=document.getElementById("Material").value;
+        console.log(den1)
+        document.getElementById("MatDen").innerHTML = den1 + " kg/dm3";
+
+        mycal();
+
+    }
+
+</script>
+
+
+</html>

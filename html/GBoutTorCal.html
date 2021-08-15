@@ -10,7 +10,7 @@
 
 <div class="container">
     <h1><a href="../index.html">
-        <img border="0" src="../img/home_40.png" alt="Home" width="16" height="16"></a> Reducer Output Torque Calculator</h1>
+        <img border="0" src="../img/home_40.png" alt="Home" width="16" height="16"></a> Reducer Output Torque calculator</h1>
     <hr>
     <div class="box1">
         <div>
@@ -18,7 +18,7 @@
         <br>
         <input type="number" id="power" value="1.5" onchange="mycal()">
         <div>
-        <label>Input Speed (rpm):</label>
+        <label>Motor Speed (rpm):</label>
         <br>
         <input type="number" id="n" value="1750" onchange="mycal()">
         </div>
@@ -35,12 +35,17 @@
         <div>
         <label>Input Torque:</label>
         <br>
-        <label class="Result" id="re1">0</label>
+        <label class="Result" id="re1"></label>
         </div>
         <div>
-        <label>Output Torque</label>
-        <br>
-        <label class="Result" id="re2">0</label>
+            <label>Rated Output Torque</label>
+            <br>
+            <label class="Result" id="re2"></label>
+        </div>
+        <div>
+            <label>Max Output Torque (with S.F.)</label>
+            <br>
+            <label class="Result" id="re3"></label>
         </div>
     </div>
     <button type="button" onclick="mycal()">Calculate</button>
@@ -56,8 +61,8 @@
 <script>
     function mycal() {
 
-    var p,n,i,SF,T1,T2;
-    var T12,T22
+    var p,n,i,SF,T1,T2,T3;
+    var T12,T22,T32;
 
     p = Number(document.getElementById("power").value);
     n = Number(document.getElementById("n").value);
@@ -65,21 +70,26 @@
     SF = Number(document.getElementById("sf").value);
 
     T1=p*9550/n;
-    T2=T1*i*SF;
+    T2=T1*i;
+    T3=T2*SF;
     T12=T1/9.8;
     T22=T2/9.8;
-
+    T32=T3/9.8;
 
     var RoundNum =1000;
     T1=Math.round(T1*RoundNum)/RoundNum;
     T2=Math.round(T2*RoundNum)/RoundNum;
+    T3=Math.round(T3*RoundNum)/RoundNum;
 
     var RoundNum =10000;
     T12=Math.round(T12*RoundNum)/RoundNum;
     T22=Math.round(T22*RoundNum)/RoundNum;
+    T32=Math.round(T32*RoundNum)/RoundNum;
 
     document.getElementById("re1").innerHTML = T1 + " (Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t" + T12 + " (kgf)";
     document.getElementById("re2").innerHTML = T2 + " (Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t" + T22 + " (kgf)";
+    document.getElementById("re3").innerHTML = T3 + " (Nm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\t" + T32 + " (kgf)";
+
     }
 
 </script>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>毫秒计时器</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            touch-action: manipulation;
+        }
+        
+        #timer {
+            font-size: 20vw;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            color: #333;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            gap: 10px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        button {
+             padding: 5px 10px;  /* 减小按钮内边距 */
+            font-size: 1vw;      /* 减小按钮字体大小 */
+            border: none;
+            border-radius: 5px;  /* 稍微减小圆角 */
+            cursor: pointer;
+            flex-grow: 1;
+            max-width: 80px;   /* 减小最大宽度 */
+            min-width: 30px;     /* 设置最小宽度 */
+            transition: background-color 0.2s;
+        }
+        
+        #start {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #stop {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        #reset {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        button:active {
+            opacity: 0.8;
+        }
+        
+        @media (min-width: 768px) {
+            #timer {
+                font-size: 10vw;
+            }
+            
+            button {
+                font-size: 2vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">0</div>
+    <div class="buttons">
+        <button id="start">开始</button>
+        <button id="stop">停止</button>
+        <button id="reset">归零</button>
+    </div>
+
+    <script>
+        const timerElement = document.getElementById('timer');
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const resetButton = document.getElementById('reset');
+        
+        let startTime;
+        let elapsedTime = 0;
+        let timerInterval;
+        let lastUpdateTime = 0;
+        
+        // 使用requestAnimationFrame实现高精度计时
+        function updateTimer(timestamp) {
+            if (!startTime) {
+                startTime = timestamp;
+                lastUpdateTime = timestamp;
+                timerElement.textContent = '0';
+                timerInterval = requestAnimationFrame(updateTimer);
+                return;
+            }
+            
+            const deltaTime = timestamp - lastUpdateTime;
+            
+            // 确保每毫秒更新一次
+            if (deltaTime >= 1) {
+                elapsedTime += deltaTime;
+                lastUpdateTime = timestamp;
+                timerElement.textContent = Math.floor(elapsedTime).toString();
+            }
+            
+            timerInterval = requestAnimationFrame(updateTimer);
+        }
+        
+        startButton.addEventListener('click', () => {
+            if (!timerInterval) {
+                startTime = null;
+                timerInterval = requestAnimationFrame(updateTimer);
+            }
+        });
+        
+        stopButton.addEventListener('click', () => {
+            if (timerInterval) {
+                cancelAnimationFrame(timerInterval);
+                timerInterval = null;
+            }
+        });
+        
+        resetButton.addEventListener('click', () => {
+            if (timerInterval) {
+                cancelAnimationFrame(timerInterval);
+                timerInterval = null;
+            }
+            elapsedTime = 0;
+            timerElement.textContent = '0';
+        });
+        
+        // 防止双击缩放（在移动设备上）
+        startButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        });
+        stopButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        });
+        resetButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进制转换工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            text-align: Left;
+            color: #333;
+	    margin-top: 0px;
+
+        }
+        .converter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .converter-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 50%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 2px;
+            padding: 0px;
+            background-color: #e9f7ef;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>进制转换工具</h1>
+    
+    <div class="converter-container">
+        <!-- 十进制转其他进制 -->
+        <div class="converter-box">
+            <h2>十进制转换</h2>
+            <div class="input-group">
+                <label for="decimal-input">十进制数:</label>
+                <input type="text" id="decimal-input" placeholder="输入十进制数">
+            </div>
+            <div class="options">
+                <div class="option-group">
+                    <label for="decimal-bits">位数:</label>
+                    <input type="number" id="decimal-bits" min="1" value="16" style="width: 60px;">
+                </div>
+            </div>
+            <button onclick="convertFromDecimal()">转换</button>
+            <div class="result" id="decimal-result">
+                结果将显示在这里...
+            </div>
+        </div>   
+        
+        <!-- 十六进制转其他进制 -->
+        <div class="converter-box">
+            <h2>十六进制转换</h2>
+            <div class="input-group">
+                <label for="hex-input">十六进制数:</label>
+                <input type="text" id="hex-input" placeholder="输入十六进制数 (如 1A)">
+            </div>
+            <div class="options">
+                <div class="option-group">
+                    <input type="radio" id="hex-unsigned" name="hex-type" value="unsigned">
+                    <label for="hex-unsigned">无符号</label>
+                </div>
+                <div class="option-group">
+                    <input type="radio" id="hex-signed" name="hex-type" value="signed" checked>
+                    <label for="hex-signed">有符号</label>
+                </div>
+                <div class="option-group">
+                    <label for="hex-bits">位数:</label>
+                    <input type="number" id="hex-bits" min="1" value="4" style="width: 60px;">
+                </div>
+            </div>
+            <button onclick="convertFromHex()">转换</button>
+            <div class="result" id="hex-result">
+                结果将显示在这里...
+            </div>
+        </div>
+
+    <!-- 二进制转其他进制 -->
+        <div class="converter-box">
+            <h2>二进制转换</h2>
+            <div class="input-group">
+                <label for="binary-input">二进制数:</label>
+                <input type="text" id="binary-input" placeholder="输入二进制数 (如 1010)">
+            </div>
+            <div class="options">
+                <div class="option-group">
+                    <input type="radio" id="binary-unsigned" name="binary-type" value="unsigned" >
+                    <label for="binary-unsigned">无符号</label>
+                </div>
+                <div class="option-group">
+                    <input type="radio" id="binary-signed" name="binary-type" value="signed" checked>
+                    <label for="binary-signed">有符号</label>
+                </div>
+            </div>
+            <button onclick="convertFromBinary()">转换</button>
+            <div class="result" id="binary-result">
+                结果将显示在这里...
+            </div>
+        </div>
+    </div>
+    <script>
+        // 十进制转其他进制
+        function convertFromDecimal() {
+            const decimalInput = document.getElementById('decimal-input').value.trim();
+            const bits = parseInt(document.getElementById('decimal-bits').value) || 8;
+            const resultElement = document.getElementById('decimal-result');
+            
+            if (!decimalInput) {
+                resultElement.innerHTML = '请输入十进制数';
+                return;
+            }
+            
+            const decimal = parseInt(decimalInput, 10);
+            if (isNaN(decimal)) {
+                resultElement.innerHTML = '无效的十进制数';
+                return;
+            }
+            
+            // 转换为二进制
+            let binary;
+            if (decimal >= 0) {
+                binary = decimal.toString(2);
+                // 正数补零
+                if (binary.length < bits) {
+                    binary = binary.padStart(bits, '0');
+                } else if (binary.length > bits) {
+                    binary = binary.slice(-bits);
+                }
+            } else {
+                // 负数处理 - 计算补码
+                const maxValue = Math.pow(2, bits);
+                const positiveValue = maxValue + decimal; // 补码表示
+                binary = positiveValue.toString(2).padStart(bits, '0');
+                if (binary.length > bits) {
+                    binary = binary.slice(-bits);
+                }
+            }
+            
+            // 转换为十六进制
+            let hex;
+            if (decimal >= 0) {
+                hex = decimal.toString(16).toUpperCase();
+                const hexBits = Math.ceil(bits / 4);
+                if (hex.length < hexBits) {
+                    hex = hex.padStart(hexBits, '0');
+                } else if (hex.length > hexBits) {
+                    hex = hex.slice(-hexBits);
+                }
+            } else {
+                // 负数处理 - 使用补码的十六进制表示
+                const maxValue = Math.pow(2, bits);
+                const positiveValue = maxValue + decimal; // 补码表示
+                hex = positiveValue.toString(16).toUpperCase();
+                const hexBits = Math.ceil(bits / 4);
+                if (hex.length < hexBits) {
+                    hex = hex.padStart(hexBits, 'F');
+                } else if (hex.length > hexBits) {
+                    hex = hex.slice(-hexBits);
+                }
+            }
+            
+            resultElement.innerHTML = `
+                <p>二进制: ${binary}</p>
+                <p>十六进制: 0x${hex}</p>
+            `;
+        }
+        
+        // 二进制转其他进制
+        function convertFromBinary() {
+            const binaryInput = document.getElementById('binary-input').value.trim();
+            const isSigned = document.getElementById('binary-signed').checked;
+            const resultElement = document.getElementById('binary-result');
+            
+            if (!binaryInput) {
+                resultElement.innerHTML = '请输入二进制数';
+                return;
+            }
+            
+            // 验证二进制输入
+            if (!/^[01]+$/.test(binaryInput)) {
+                resultElement.innerHTML = '无效的二进制数 (只能包含0和1)';
+                return;
+            }
+            
+            let decimal;
+            if (isSigned) {
+                // 有符号数处理
+                const bits = binaryInput.length;
+                const msb = binaryInput[0]; // 最高位
+                
+                if (msb === '1') {
+                    // 负数 - 计算补码
+                    const inverted = binaryInput.split('').map(bit => bit === '1' ? '0' : '1').join('');
+                    decimal = -((parseInt(inverted, 2) + 1));
+                } else {
+                    // 正数
+                    decimal = parseInt(binaryInput, 2);
+                }
+            } else {
+                // 无符号数
+                decimal = parseInt(binaryInput, 2);
+            }
+            
+            // 转换为十六进制
+            let hex = decimal.toString(16).toUpperCase();
+            const hexBits = Math.ceil(binaryInput.length / 4); // 计算十六进制需要的位数
+            if (hex.length < hexBits) {
+                if (decimal >= 0) {
+                    hex = hex.padStart(hexBits, '0');
+                } else {
+                    // 负数补F
+                    hex = hex.padStart(hexBits, 'F');
+                }
+            }
+            
+            resultElement.innerHTML = `
+                <p>十进制: ${decimal}</p>
+                <p>十六进制: 0x${hex}</p>
+            `;
+        }
+        
+        // 十六进制转其他进制
+        function convertFromHex() {
+            const hexInput = document.getElementById('hex-input').value.trim();
+            const isSigned = document.getElementById('hex-signed').checked;
+            const bits = parseInt(document.getElementById('hex-bits').value) || 4;
+            const resultElement = document.getElementById('hex-result');
+            
+            if (!hexInput) {
+                resultElement.innerHTML = '请输入十六进制数';
+                return;
+            }
+            
+            // 去除可能的0x前缀
+            const cleanHex = hexInput.replace(/^0x/, '');
+            
+            // 验证十六进制输入
+            if (!/^[0-9A-Fa-f]+$/.test(cleanHex)) {
+                resultElement.innerHTML = '无效的十六进制数 (只能包含0-9, A-F)';
+                return;
+            }
+            
+            let decimal;
+            if (isSigned) {
+                // 有符号数处理
+                const maxUnsigned = Math.pow(2, bits * 4);
+                const maxSigned = Math.pow(2, bits * 4 - 1);
+                
+                decimal = parseInt(cleanHex, 16);
+                if (decimal >= maxSigned) {
+                    decimal = decimal - maxUnsigned;
+                }
+            } else {
+                // 无符号数
+                decimal = parseInt(cleanHex, 16);
+            }
+            
+            // 转换为二进制
+            let binary = decimal.toString(2);
+            const binaryBits = bits * 4;
+            if (binary.length < binaryBits) {
+                if (decimal >= 0) {
+                    binary = binary.padStart(binaryBits, '0');
+                } else {
+                    // 负数补1
+                    binary = binary.padStart(binaryBits, '1');
+                }
+            } else if (binary.length > binaryBits) {
+                binary = binary.slice(-binaryBits);
+            }
+            
+            resultElement.innerHTML = `
+                <p>十进制: ${decimal}</p>
+                <p>二进制: ${binary}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
